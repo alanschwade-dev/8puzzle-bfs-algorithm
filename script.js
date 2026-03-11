@@ -51,6 +51,7 @@ function resolverBFS(estadoInicial) {
         // Checa se chegamos no objetivo
         if (atual.estado === ESTADO_OBJETIVO) {
             exibirResultados(atual.caminho, estadosTestados);
+            animarSolucao(estadoInicial, atual.caminho);
             return;
         }
 
@@ -118,4 +119,31 @@ function desenharTabuleiro(estado) {
         
         board.appendChild(tile);
     }
+}
+// Função para animar a solução passo a passo na tela
+function animarSolucao(estadoInicial, caminho) {
+    let estadoAtual = estadoInicial;
+    let passo = 0;
+
+    // setInterval executa um bloco de código repetidamente com um intervalo de tempo
+    let intervalo = setInterval(() => {
+        // Se já mostramos todos os passos, paramos a animação
+        if (passo >= caminho.length) {
+            clearInterval(intervalo);
+            return;
+        }
+
+        // Descobre onde está o espaço vazio (0) e onde está a peça que tem que se mover
+        let posZero = estadoAtual.indexOf('0');
+        let numeroQueVaiMover = caminho[passo].toString();
+        let posNumero = estadoAtual.indexOf(numeroQueVaiMover);
+
+        // Atualiza a string do estado trocando o 0 e a peça de lugar
+        estadoAtual = trocarCaracteres(estadoAtual, posZero, posNumero);
+        
+        // Redesenha o tabuleiro no HTML com a nova posição
+        desenharTabuleiro(estadoAtual);
+        
+        passo++; // Vai para o próximo movimento
+    }, 800); // 400 milissegundos de atraso entre cada movimento (quase meio segundo)
 }
