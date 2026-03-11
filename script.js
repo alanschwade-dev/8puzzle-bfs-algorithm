@@ -33,8 +33,8 @@ function resolverBFS(estadoInicial) {
     // Fila armazena objetos com: estado atual, caminho percorrido, posição do zero
     let fila = [{ 
         estado: estadoInicial, 
-        caminho: [], 
-        posicaoZero: estadoInicial.indexOf('0') 
+        caminho: [], //historico de movimentações
+        posicaoZero: estadoInicial.indexOf('0') //espaço vazio
     }];
     
     // Set para não repetir estados e evitar loop infinito
@@ -44,7 +44,7 @@ function resolverBFS(estadoInicial) {
     let estadosTestados = 0;
 
     while (fila.length > 0) {
-        // Tira o primeiro elemento da fila
+        // Primeiro estado da fila
         let atual = fila.shift();
         estadosTestados++;
 
