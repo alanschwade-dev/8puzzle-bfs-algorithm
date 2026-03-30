@@ -1,9 +1,7 @@
-// O estado final que queremos alcançar
-const ESTADO_OBJETIVO = "123456780";
+const estadoObjetivo = "123456780";
 
 // Mapeamento dos vizinhos: Para cada posição (0 a 8) no array/string, 
-// quais índices o espaço vazio (0) pode trocar de lugar?
-const MOVIMENTOS_VALIDOS = {
+const movimentosValidos = {
     0: [1, 3],
     1: [0, 2, 4],
     2: [1, 5],
@@ -15,7 +13,7 @@ const MOVIMENTOS_VALIDOS = {
     8: [5, 7]
 };
 
-// Função principal disparada pelo botão
+//Função principal disparada pelo botão
 function iniciarBusca() {
     const input = document.getElementById('initialState').value;
     
@@ -28,35 +26,34 @@ function iniciarBusca() {
     resolverBFS(input);
 }
 
-// O Algoritmo de Busca em Largura (BFS)
+//Busca em Largura (BFS)
 function resolverBFS(estadoInicial) {
-    // Fila armazena objetos com: estado atual, caminho percorrido, posição do zero
+    //Informações da fila
     let fila = [{ 
         estado: estadoInicial, 
         caminho: [], //historico de movimentações
         posicaoZero: estadoInicial.indexOf('0') //espaço vazio
     }];
     
-    // Set para não repetir estados e evitar loop infinito
+    // Set para não repetir estados e evitar loop
     let visitados = new Set();
     visitados.add(estadoInicial);
 
     let estadosTestados = 0;
 
     while (fila.length > 0) {
-        // Primeiro estado da fila
+        // Tira o primeiro estado da fila
         let atual = fila.shift();
         estadosTestados++;
 
-        // Checa se chegamos no objetivo
-        if (atual.estado === ESTADO_OBJETIVO) {
+        // Checar o objetivo
+        if (atual.estado === estadoObjetivo) {
             exibirResultados(atual.caminho, estadosTestados);
-            animarSolucao(estadoInicial, atual.caminho);
             return;
         }
 
         // Pega as posições para onde o 0 pode ir
-        let movimentosPossiveis = MOVIMENTOS_VALIDOS[atual.posicaoZero];
+        let movimentosPossiveis = movimentosValidos[atual.posicaoZero];
 
         for (let proximaPosicao of movimentosPossiveis) {
             // Gera o novo estado trocando o 0 com o número vizinho
@@ -66,7 +63,7 @@ function resolverBFS(estadoInicial) {
             if (!visitados.has(novoEstado)) {
                 visitados.add(novoEstado);
                 
-                // Qual número movemos? (Apenas para mostrar no log/caminho)
+                // Mostrar o log do caminho)
                 let numeroMovido = atual.estado[proximaPosicao];
                 
                 // Coloca o novo estado no final da fila para ser testado depois
@@ -82,7 +79,7 @@ function resolverBFS(estadoInicial) {
     alert("Solução não encontrada para este estado!");
 }
 
-// --- Funções Auxiliares ---
+// Funções Auxiliares
 
 // Função para trocar dois caracteres de lugar numa string
 function trocarCaracteres(str, i, j) {
@@ -120,30 +117,4 @@ function desenharTabuleiro(estado) {
         board.appendChild(tile);
     }
 }
-// Função para animar a solução passo a passo na tela
-function animarSolucao(estadoInicial, caminho) {
-    let estadoAtual = estadoInicial;
-    let passo = 0;
 
-    // setInterval executa um bloco de código repetidamente com um intervalo de tempo
-    let intervalo = setInterval(() => {
-        // Se já mostramos todos os passos, paramos a animação
-        if (passo >= caminho.length) {
-            clearInterval(intervalo);
-            return;
-        }
-
-        // Descobre onde está o espaço vazio (0) e onde está a peça que tem que se mover
-        let posZero = estadoAtual.indexOf('0');
-        let numeroQueVaiMover = caminho[passo].toString();
-        let posNumero = estadoAtual.indexOf(numeroQueVaiMover);
-
-        // Atualiza a string do estado trocando o 0 e a peça de lugar
-        estadoAtual = trocarCaracteres(estadoAtual, posZero, posNumero);
-        
-        // Redesenha o tabuleiro no HTML com a nova posição
-        desenharTabuleiro(estadoAtual);
-        
-        passo++; // Vai para o próximo movimento
-    }, 800); // 400 milissegundos de atraso entre cada movimento (quase meio segundo)
-}
